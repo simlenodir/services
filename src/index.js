@@ -61,10 +61,7 @@ bot.on('message', async msg => {
                 force_reply: true
             }   
         })
-        // bot.sendMessage(chatId, `Sizning ismingiz ${msg.text} tasdiqlaysizmi`)
-        newUser.name = msg.text
-        newUser.user_name = msg.chat.first_name
-        console.log( msg.text);
+
         bot.onReplyToMessage((await userContact)?.chat.id, (await userContact).message_id, async Number => {
             const userContact = await bot.sendMessage(Number.chat.id, 'Ismingizni yozing', {
                 reply_markup: {
@@ -72,7 +69,7 @@ bot.on('message', async msg => {
                 }
             })
         
-           console.log( Number.text, );
+           console.log( Number.text,"doaf" );
     
         })
     }
