@@ -5,8 +5,11 @@ dotenv.config()
 import { usersSelect } from "./helpers/keyeboards/usersSelect.js"
 import { userMenu } from "./helpers/keyeboards/userServiceMenu.js"
 import { fetchData } from "./utils/pg.js"
-import { pulledCategories } from "./helpers/keyeboards/categories.js"
 import { userServicesFunction } from "./helpers/keyeboards/usersServices.js"
+import {userBackToMenu } from "./helpers/keyeboards/userBack.js"
+import {allServices} from "./helpers/keyeboards/allServices.js"
+import { changeUserInfo } from "./helpers/keyeboards/changeUser.js"
+import {changeUserName} from "./helpers/keyeboards/changerUsername.js"
 
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true })
 
@@ -67,6 +70,7 @@ bot.on('message', async msg => {
         bot.onReplyToMessage((await userContact)?.chat.id, (await userContact).message_id, async Number => {
 
             const newUser = await fetchData(`INSERT INTO users(user_id , user_name,user_number) values($1 ,$2 ,$3) returning *`, chatId, msg.text, Number.text)
+
             const userContact = await bot.sendMessage(Number.chat.id, 'Xizmatlarni tanlang', {
                 reply_markup: {
                     keyboard: userMenu(),
@@ -85,12 +89,7 @@ bot.on('message', async msg => {
     newUser.id = chatId
 
     if (msg.text == "XIZMATLAR") {
-        bot.sendMessage(chatId, "Xizmatlarimizni tanlang", {
-            reply_markup: {
-                keyboard: pulledCategories,
-                resize_keyboard: true
-            }
-        })
+        const services = await allServices(bot, chatId)
     }
 
 })
@@ -101,26 +100,44 @@ bot.on('message', async msg => {
 
     if (msg.text == "TANLANGAN XIZMATLAR") {
         const userServices = await userServicesFunction(bot, chatId)
-        bot.sendMessage(chatId, "Xizmatlarimizni tanlang", {
-            reply_markup: {
-                keyboard: pulledCategories,
-                resize_keyboard: true
-            }
-        })
     }
-
 })
 
 bot.on('message', async msg => {
     const chatId = msg.chat.id
-
     if (msg.text == "bak to menu") {
-        bot.sendMessage(chatId, "Menuga qaytish", {
-            reply_markup: {
-                keyboard: userMenu(),
-                resize_keyboard: true
-            }
+       const userBack = await userBackToMenu(bot, chatId)
+    }
+})
+
+bot.on('message' , async msg => {
+    const chatId = msg.chat.id
+   
+    if (msg.text == "MA`LUMOTLARNI O`ZGARTIRISH") {
+       const userUserChange= await changeUserInfo(bot, chatId)
+    }
+})
+
+bot.on('callback_query', async msg => {
+    const chatId = msg?.from?.id
+    const data = msg.data
+   
+    if (data == 'name') {
+        const changename =await changeUserName(bot, chatId) 
+        
+        await bot.onReplyToMessage(chatId, async name => {
+            const updatUser = await fetchData(`update users set user_name = $1 where user_id = $2 returning *`, name, chatId)
         })
+        await bot.sendMessage(chatId, 'Ismingiz o`zgardi')
     }
 
+    if (data == 'number') {
+        const changename =await changeUserName(bot, chatId) 
+        
+        await bot.onReplyToMessage(chatId, async name => {
+            const updatUser = await fetchData(`update users set user_name = $1 where user_id = $2 returning *`, name, chatId)
+            
+        })
+        await bot.sendMessage(chatId, 'Raqamingiz o`zgardi')
+    }
 })

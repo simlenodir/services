@@ -41,6 +41,23 @@ CREATE TABLE "orders" (
   "order_time" varchar(128)
 );
 
+select 
+    u.user_name,
+    o.order_time,
+    m.master_name,
+    m.master_number
+from
+    users as u 
+join
+    orders as o 
+on 
+    o.user_id = u.user_id
+join
+    master as m 
+on 
+    o.master_id = m.master_id
+where u.user_id = '1964313970';                 
+
 CREATE TABLE "rate" (
   "id" uuid,
   "master_id" varchar(128),

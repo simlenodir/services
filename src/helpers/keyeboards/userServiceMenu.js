@@ -7,7 +7,7 @@ export const userMenu = () => {
             text: "TANLANGAN XIZMATLAR"
         }],
         [{
-            text: "MA’LUMOTLARNI O’ZGARTIRISH"
+            text: "MA`LUMOTLARNI O`ZGARTIRISH"
         }]
     ]
 }
