@@ -51,6 +51,7 @@ bot.on('message', async msg => {
             }
         })
     }
+<<<<<<< HEAD
     if (msg.text == "Usta") {
         son = 1;
         const userName = await bot.sendMessage(msg.chat.id, 'Kasbingizni tanlang', {
@@ -58,6 +59,15 @@ bot.on('message', async msg => {
                 keyboard: pulledCategories
             },
             resize_keyboard: true
+=======
+
+    if (msg.text == "Usta") {
+        bot.sendMessage(chatId, "Xizmatlarimizni tanlang", {
+            reply_markup: {
+                keyboard: pulledCategories,
+                resize_keyboard: true
+            }
+>>>>>>> 6381bfcc709a3bf4fd0e5ff2c5c46767188920bb
         })
     }
 })
