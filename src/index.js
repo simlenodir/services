@@ -5,7 +5,8 @@ dotenv.config()
 import { usersSelect } from "./helpers/keyeboards/usersSelect.js"
 import { userMenu } from "./helpers/keyeboards/userServiceMenu.js"
 import { fetchData } from "./utils/pg.js"
-import { Categories, pulledCategories } from "./helpers/keyeboards/categories.js"
+import { pulledCategories } from "./helpers/keyeboards/categories.js"
+import { userServicesFunction } from "./helpers/keyeboards/usersServices.js"
 
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true })
 
@@ -42,14 +43,21 @@ bot.on('message', async msg => {
         })
     }
 
-
-
     if (msg.text == "Mijoz") {
         son = 1;
         const userName = await bot.sendMessage(msg.chat.id, 'Ismingizni yozing', {
             reply_markup: {
                 force_reply: true
             }
+        })
+    }
+    if (msg.text == "Usta") {
+        son = 1;
+        const userName = await bot.sendMessage(msg.chat.id, 'Kasbingizni tanlang', {
+            reply_markup: {
+                keyboard: pulledCategories
+            },
+            resize_keyboard: true
         })
     }
 })
@@ -89,6 +97,36 @@ bot.on('message', async msg => {
         bot.sendMessage(chatId, "Xizmatlarimizni tanlang", {
             reply_markup: {
                 keyboard: pulledCategories,
+                resize_keyboard: true
+            }
+        })
+    }
+
+})
+
+bot.on('message', async msg => {
+    const chatId = msg.chat.id
+    newUser.id = chatId
+
+    if (msg.text == "TANLANGAN XIZMATLAR") {
+        const userServices = await userServicesFunction(bot, chatId)
+        bot.sendMessage(chatId, "Xizmatlarimizni tanlang", {
+            reply_markup: {
+                keyboard: pulledCategories,
+                resize_keyboard: true
+            }
+        })
+    }
+
+})
+
+bot.on('message', async msg => {
+    const chatId = msg.chat.id
+
+    if (msg.text == "bak to menu") {
+        bot.sendMessage(chatId, "Menuga qaytish", {
+            reply_markup: {
+                keyboard: userMenu(),
                 resize_keyboard: true
             }
         })
