@@ -52,6 +52,15 @@ bot.on('message', async msg => {
             }
         })
     }
+
+    if (msg.text == "Usta") {
+        bot.sendMessage(chatId, "Xizmatlarimizni tanlang", {
+            reply_markup: {
+                keyboard: pulledCategories,
+                resize_keyboard: true
+            }
+        })
+    }
 })
 
 bot.on('message', async msg => {
