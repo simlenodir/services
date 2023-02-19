@@ -3,6 +3,9 @@ import dotenv from "dotenv"
 dotenv.config()
 
 import { usersSelect } from "./helpers/keyeboards/usersSelect.js"
+import { userMenu } from "./helpers/keyeboards/userServiceMenu.js"
+import { fetchData } from "./utils/pg.js"
+import { Categories, pulledCategories } from "./helpers/keyeboards/categories.js"
 
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true })
 
@@ -59,21 +62,36 @@ bot.on('message', async msg => {
         const userContact = bot.sendMessage(chatId, 'Telfon raqamingizni kiriting', {
             reply_markup: {
                 force_reply: true
-            }   
+            }
         })
 
         bot.onReplyToMessage((await userContact)?.chat.id, (await userContact).message_id, async Number => {
-            const userContact = await bot.sendMessage(Number.chat.id, 'Ismingizni yozing', {
+
+            const newUser = await fetchData(`INSERT INTO users(user_id , user_name,user_number) values($1 ,$2 ,$3) returning *`, chatId, msg.text, Number.text)
+            const userContact = await bot.sendMessage(Number.chat.id, 'Xizmatlarni tanlang', {
                 reply_markup: {
-                    force_reply: true
+                    keyboard: userMenu(),
+                    force_reply: true,
+                    resize_keyboard: true
                 }
             })
-        
-           console.log( Number.text,"doaf" );
-    
+
         })
     }
 
 })
-console.log(newUser);
 
+bot.on('message', async msg => {
+    const chatId = msg.chat.id
+    newUser.id = chatId
+
+    if (msg.text == "XIZMATLAR") {
+        bot.sendMessage(chatId, "Xizmatlarimizni tanlang", {
+            reply_markup: {
+                keyboard: pulledCategories,
+                resize_keyboard: true
+            }
+        })
+    }
+
+})
